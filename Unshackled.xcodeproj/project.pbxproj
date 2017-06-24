@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0128ADE81EFC10F900F85DC0 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0128ADE71EFC10F900F85DC0 /* Utility.swift */; };
+		01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01AD9D9A1EFB36E900C444E9 /* TileSet.sks */; };
 		01E6DBB91EF9ABBF00DC6837 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */; };
 		01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */; };
-		01E6DBBD1EF9ABBF00DC6837 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBBC1EF9ABBF00DC6837 /* Actions.sks */; };
 		01E6DBBF1EF9ABBF00DC6837 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */; };
 		01E6DBC11EF9ABBF00DC6837 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */; };
 		01E6DBC41EF9ABC000DC6837 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBC21EF9ABC000DC6837 /* Main.storyboard */; };
@@ -17,6 +18,7 @@
 		01E6DBC91EF9ABC000DC6837 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBC71EF9ABC000DC6837 /* LaunchScreen.storyboard */; };
 		01E6DBD41EF9ABC000DC6837 /* UnshackledTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBD31EF9ABC000DC6837 /* UnshackledTests.swift */; };
 		01E6DBDF1EF9ABC000DC6837 /* UnshackledUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBDE1EF9ABC000DC6837 /* UnshackledUITests.swift */; };
+		01E6DBED1EF9E28F00DC6837 /* GestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,10 +39,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0128ADE71EFC10F900F85DC0 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		01AD9D9A1EFB36E900C444E9 /* TileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TileSet.sks; sourceTree = "<group>"; };
 		01E6DBB51EF9ABBF00DC6837 /* Unshackled.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unshackled.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		01E6DBBC1EF9ABBF00DC6837 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		01E6DBC31EF9ABC000DC6837 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -53,6 +56,7 @@
 		01E6DBDA1EF9ABC000DC6837 /* UnshackledUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnshackledUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E6DBDE1EF9ABC000DC6837 /* UnshackledUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnshackledUITests.swift; sourceTree = "<group>"; };
 		01E6DBE01EF9ABC000DC6837 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,15 +107,17 @@
 		01E6DBB71EF9ABBF00DC6837 /* Unshackled */ = {
 			isa = PBXGroup;
 			children = (
+				01E6DBEE1EF9E3B400DC6837 /* GestureInput */,
 				01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */,
+				0128ADE71EFC10F900F85DC0 /* Utility.swift */,
 				01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */,
-				01E6DBBC1EF9ABBF00DC6837 /* Actions.sks */,
 				01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */,
 				01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */,
 				01E6DBC21EF9ABC000DC6837 /* Main.storyboard */,
 				01E6DBC51EF9ABC000DC6837 /* Assets.xcassets */,
 				01E6DBC71EF9ABC000DC6837 /* LaunchScreen.storyboard */,
 				01E6DBCA1EF9ABC000DC6837 /* Info.plist */,
+				01AD9D9A1EFB36E900C444E9 /* TileSet.sks */,
 			);
 			path = Unshackled;
 			sourceTree = "<group>";
@@ -132,6 +138,14 @@
 				01E6DBE01EF9ABC000DC6837 /* Info.plist */,
 			);
 			path = UnshackledUITests;
+			sourceTree = "<group>";
+		};
+		01E6DBEE1EF9E3B400DC6837 /* GestureInput */ = {
+			isa = PBXGroup;
+			children = (
+				01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */,
+			);
+			name = GestureInput;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,11 +258,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */,
 				01E6DBC41EF9ABC000DC6837 /* Main.storyboard in Resources */,
 				01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */,
 				01E6DBC61EF9ABC000DC6837 /* Assets.xcassets in Resources */,
 				01E6DBC91EF9ABC000DC6837 /* LaunchScreen.storyboard in Resources */,
-				01E6DBBD1EF9ABBF00DC6837 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,9 +287,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0128ADE81EFC10F900F85DC0 /* Utility.swift in Sources */,
 				01E6DBBF1EF9ABBF00DC6837 /* GameScene.swift in Sources */,
 				01E6DBC11EF9ABBF00DC6837 /* GameViewController.swift in Sources */,
 				01E6DBB91EF9ABBF00DC6837 /* AppDelegate.swift in Sources */,
+				01E6DBED1EF9E28F00DC6837 /* GestureController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,6 +544,7 @@
 				01E6DBE51EF9ABC000DC6837 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01E6DBE61EF9ABC000DC6837 /* Build configuration list for PBXNativeTarget "UnshackledTests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +553,7 @@
 				01E6DBE81EF9ABC000DC6837 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01E6DBE91EF9ABC000DC6837 /* Build configuration list for PBXNativeTarget "UnshackledUITests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +562,7 @@
 				01E6DBEB1EF9ABC000DC6837 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
