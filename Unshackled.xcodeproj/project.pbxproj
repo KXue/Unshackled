@@ -111,7 +111,7 @@
 		01E6DBB71EF9ABBF00DC6837 /* Unshackled */ = {
 			isa = PBXGroup;
 			children = (
-				0AAAEFB71F003D1A003F9FA9 /* Characters */,
+				0AAAEFB71F003D1A003F9FA9 /* GameObjects */,
 				01E6DBEE1EF9E3B400DC6837 /* GestureInput */,
 				01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */,
 				0AAAEFBC1F00530D003F9FA9 /* Types.swift */,
@@ -153,13 +153,13 @@
 			name = GestureInput;
 			sourceTree = "<group>";
 		};
-		0AAAEFB71F003D1A003F9FA9 /* Characters */ = {
+		0AAAEFB71F003D1A003F9FA9 /* GameObjects */ = {
 			isa = PBXGroup;
 			children = (
 				0AAAEFB81F003D2E003F9FA9 /* Player.swift */,
 				0AAAEFBA1F005240003F9FA9 /* Extras.swift */,
 			);
-			name = Characters;
+			name = GameObjects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

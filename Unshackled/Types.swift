@@ -9,5 +9,5 @@
 import Foundation
 
 enum Direction: Int{
-    case forward = 0, backward, left, right
+    case left = 0, right
 }
