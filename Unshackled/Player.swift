@@ -17,7 +17,12 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     let animationFrameEnd: [UInt] = [10, 5, 5, 9, 2, 2]
     let animationName: [String] = ["Run", "Idle", "Jump", "Jump", "Crouch", "Shoot"]
     let animationRepeats: [Bool] = [true, true, false, false, false, false]
+    let playerRadius: CGFloat = 8.0
+    let movementSpeed: CGFloat = 8.0
+    
+    var footNode: SKNode!
     var animations = [SKAction]()
+    
     
     func createAnimations(frameTime: TimeInterval){
         for animation in 0..<PlayerAnimation.end.rawValue{
@@ -36,7 +41,8 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
             if animationRepeats[animationIndex.rawValue]{
                 animation = animations[animationIndex.rawValue]
             } else {
-                animation = SKAction.sequence([animations[animationIndex.rawValue] , animations[PlayerAnimation.idle.rawValue]])
+//                animation = SKAction.sequence([animations[animationIndex.rawValue] , animations[PlayerAnimation.idle.rawValue]])
+                animation = SKAction.repeatForever(animations[animationIndex.rawValue])
             }
             run(animation, withKey: "animation")
         }
@@ -44,10 +50,36 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     }
     
     func didMoveToScene(){
-        playAnimation(animationIndex: PlayerAnimation.run)
+        footNode = childNode(withName: "FootNode")!
+        setupPhysics()
+        playAnimation(animationIndex: PlayerAnimation.idle)
+    }
+    
+    func move(amount: CGFloat){
+        let normalizedAmount = abs(amount) > 1 ? amount / abs(amount) : amount
+        physicsBody?.applyForce(CGVector(dx: normalizedAmount * movementSpeed, dy: (physicsBody?.velocity.dy)!))
+        
     }
     
     func setupPhysics(){
+        physicsBody = SKPhysicsBody(circleOfRadius: playerRadius)
+        physicsBody?.allowsRotation = false
+        physicsBody?.collisionBitMask = PhysicsCategory.Platform
+        physicsBody?.fieldBitMask = PhysicsCategory.Platform
+        physicsBody?.categoryBitMask = PhysicsCategory.Player
+        physicsBody?.friction = 0
+        physicsBody?.linearDamping = 0
+        physicsBody?.restitution = 0
         
+        footNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 8, height: 8))
+        footNode.physicsBody?.allowsRotation = false
+        footNode.physicsBody?.collisionBitMask = PhysicsCategory.Platform
+        footNode.physicsBody?.fieldBitMask = PhysicsCategory.Platform
+        footNode.physicsBody?.categoryBitMask = PhysicsCategory.Player
+        footNode.physicsBody?.pinned = true
+        footNode.physicsBody?.friction = 0
+        footNode.physicsBody?.linearDamping = 0
+        footNode.physicsBody?.restitution = 0
+
     }
 }

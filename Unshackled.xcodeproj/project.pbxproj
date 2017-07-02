@@ -17,7 +17,6 @@
 		01E6DBC91EF9ABC000DC6837 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBC71EF9ABC000DC6837 /* LaunchScreen.storyboard */; };
 		01E6DBD41EF9ABC000DC6837 /* UnshackledTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBD31EF9ABC000DC6837 /* UnshackledTests.swift */; };
 		01E6DBDF1EF9ABC000DC6837 /* UnshackledUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBDE1EF9ABC000DC6837 /* UnshackledUITests.swift */; };
-		01E6DBED1EF9E28F00DC6837 /* GestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */; };
 		0AAAEFB91F003D2E003F9FA9 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAAEFB81F003D2E003F9FA9 /* Player.swift */; };
 		0AAAEFBB1F005240003F9FA9 /* Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAAEFBA1F005240003F9FA9 /* Extras.swift */; };
 		0AAAEFBD1F00530D003F9FA9 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAAEFBC1F00530D003F9FA9 /* Types.swift */; };
@@ -57,7 +56,6 @@
 		01E6DBDA1EF9ABC000DC6837 /* UnshackledUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnshackledUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E6DBDE1EF9ABC000DC6837 /* UnshackledUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnshackledUITests.swift; sourceTree = "<group>"; };
 		01E6DBE01EF9ABC000DC6837 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureController.swift; sourceTree = "<group>"; };
 		0AAAEFB81F003D2E003F9FA9 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		0AAAEFBA1F005240003F9FA9 /* Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extras.swift; sourceTree = "<group>"; };
 		0AAAEFBC1F00530D003F9FA9 /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
@@ -112,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				0AAAEFB71F003D1A003F9FA9 /* GameObjects */,
-				01E6DBEE1EF9E3B400DC6837 /* GestureInput */,
 				01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */,
 				0AAAEFBC1F00530D003F9FA9 /* Types.swift */,
 				01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */,
@@ -143,14 +140,6 @@
 				01E6DBE01EF9ABC000DC6837 /* Info.plist */,
 			);
 			path = UnshackledUITests;
-			sourceTree = "<group>";
-		};
-		01E6DBEE1EF9E3B400DC6837 /* GestureInput */ = {
-			isa = PBXGroup;
-			children = (
-				01E6DBEC1EF9E28F00DC6837 /* GestureController.swift */,
-			);
-			name = GestureInput;
 			sourceTree = "<group>";
 		};
 		0AAAEFB71F003D1A003F9FA9 /* GameObjects */ = {
@@ -306,7 +295,6 @@
 				0AAAEFBD1F00530D003F9FA9 /* Types.swift in Sources */,
 				01E6DBB91EF9ABBF00DC6837 /* AppDelegate.swift in Sources */,
 				0AAAEFB91F003D2E003F9FA9 /* Player.swift in Sources */,
-				01E6DBED1EF9E28F00DC6837 /* GestureController.swift in Sources */,
 				0AAAEFBB1F005240003F9FA9 /* Extras.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
