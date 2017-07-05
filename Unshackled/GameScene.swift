@@ -18,17 +18,17 @@ struct PhysicsCategory{
 class GameScene: SKScene {
     //MARK: Member Lets
     let topBottomTileReductionFraction:CGFloat = 0.55
-    let panRecognizer = UIPanGestureRecognizer()
     
     //MARK Member Vars
+    var mapNode: SKTileMapNode!
     var player: Player!
-    var panAmount: CGFloat = 0
-
+    var lastTime:TimeInterval = 0
     
     //MARK: Override Functions
     
     override func didMove(to view: SKView) {
-        attachTileMapPhysics(map: (childNode(withName: "Platforms") as! SKTileMapNode))
+        mapNode = childNode(withName: "Platforms") as! SKTileMapNode
+        attachTileMapPhysics(map: mapNode)
         enumerateChildNodes(withName: "//*", using: {node, _ in
             if let animatableNode = node as? Animatable{
                 animatableNode.createAnimations(frameTime: 1.0/10.0)
@@ -42,14 +42,38 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        player.move(amount: panAmount)
+        let deltaTime = lastTime > 0 ? currentTime - lastTime : 0
+        lastTime = currentTime
+        player.update(deltaTime)
     }
     
     //MARK: Gesture Recognizers
     
     func addGestureRecognizers(to view: SKView) {
-        panRecognizer.addTarget(self, action: #selector(didPan(sender:)))
-        view.addGestureRecognizer(panRecognizer)
+        let leftSwipeRecognizer = UISwipeGestureRecognizer()
+        let rightSwipeRecognizer = UISwipeGestureRecognizer()
+        let downSwipeRecognizer = UISwipeGestureRecognizer()
+        let upSwipeRecognizer = UISwipeGestureRecognizer()
+        let tapRecognizer = UITapGestureRecognizer()
+        
+        leftSwipeRecognizer.addTarget(self, action: #selector(didSwipe(sender:)))
+        leftSwipeRecognizer.direction = .left
+        view.addGestureRecognizer(leftSwipeRecognizer)
+        
+        rightSwipeRecognizer.addTarget(self, action: #selector(didSwipe(sender:)))
+        rightSwipeRecognizer.direction = .right
+        view.addGestureRecognizer(rightSwipeRecognizer)
+
+        downSwipeRecognizer.addTarget(self, action: #selector(didSwipe(sender:)))
+        downSwipeRecognizer.direction = .down
+        view.addGestureRecognizer(downSwipeRecognizer)
+        
+        upSwipeRecognizer.addTarget(self, action: #selector(didSwipe(sender:)))
+        upSwipeRecognizer.direction = .up
+        view.addGestureRecognizer(upSwipeRecognizer)
+        
+        tapRecognizer.addTarget(self, action: #selector(didTap(sender:)))
+        view.addGestureRecognizer(tapRecognizer)
     }
     
     func removeGestureRecognizers() {
@@ -60,12 +84,26 @@ class GameScene: SKScene {
     
     //MARK: Gesture Handlers
     
-    func didPan(sender: UIPanGestureRecognizer){
-        if sender.state != .ended {
-            panAmount = sender.translation(in: view).x
-        }else{
-            panAmount = 0
+    func didSwipe(sender:UISwipeGestureRecognizer){
+        switch sender.direction{
+        case UISwipeGestureRecognizerDirection.left:
+            player.startRunning(isRight: false)
+        case UISwipeGestureRecognizerDirection.right:
+            player.startRunning(isRight: true)
+        case UISwipeGestureRecognizerDirection.up:
+            player.startJumping()
+        case UISwipeGestureRecognizerDirection.down:
+            player.stop()
+        default:
+            break
         }
+    }
+    
+    func didTap(sender: UITapGestureRecognizer){
+        let touchLocation = convertPoint(fromView: sender.location(in: sender.view))
+        print("\(convertPoint(fromView: sender.location(in: sender.view)))")
+        print("\(player.position)")
+        player.shoot(at: CGPoint(x: touchLocation.x - player.position.x, y: touchLocation.y - player.position.y))
     }
     
     //MARK: TileMap Physics
@@ -108,12 +146,10 @@ class GameScene: SKScene {
         let halfWidth = CGFloat(tileMap.numberOfColumns) * 0.5 * tileSize.width
         let halfHeight = CGFloat(tileMap.numberOfRows) * 0.5 * tileSize.height
         let topBottomTileSize = CGSize(width: tileSize.width, height: tileSize.height * topBottomTileReductionFraction)
-        let topBottomOffset = (tileSize.height - topBottomTileSize.height) * 0.5
-        
         var physicsBodies = [SKPhysicsBody]()
-        
         var start:Int = -1
         var end:Int = -1
+        var isTop = false
         for row in 0..<tileMap.numberOfRows {
             
             for col in 0..<tileMap.numberOfColumns {
@@ -127,6 +163,7 @@ class GameScene: SKScene {
                             else{
                                 end = col
                             }
+                            isTop = tileDefinition.name!.range(of:"TilesT") != nil
                             
                         }else{
                             let x = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width * 0.5)
@@ -136,36 +173,39 @@ class GameScene: SKScene {
                             end = -1
                         }
                     } else if start != -1 {
-                        physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight)))
+                        physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
                         start = -1
                         end = -1
                     }
                 }else if start != -1 {
                     //make rectangle here
-                    physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight)))
+                    physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
                     start = -1
                     end = -1
                 }
             }
             if start != -1{
-                physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight)))
+                physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
                 start = -1
                 end = -1
             }
         }
         tileMap.physicsBody = SKPhysicsBody(bodies: physicsBodies)
         tileMap.physicsBody?.isDynamic = false
+        tileMap.physicsBody?.friction = 0
+        tileMap.physicsBody?.linearDamping = 0
         tileMap.physicsBody?.categoryBitMask = PhysicsCategory.Platform
         tileMap.physicsBody?.collisionBitMask = PhysicsCategory.Player
         tileMap.physicsBody?.contactTestBitMask = PhysicsCategory.Player
         tileMap.physicsBody?.fieldBitMask = PhysicsCategory.None
     }
 //     body = SKPhysicsBody(rectangleOf: topBottomTileSize, center: CGPoint(x:x, y: y + topBottomOffset))
-    func createRowTiles(start: Int, end: Int, row: Int, tileSize: CGSize, halfSize: CGSize) -> SKPhysicsBody {
+    func createRowTiles(start: Int, end: Int, row: Int, tileSize: CGSize, halfSize: CGSize, fractionSize: CGSize, isTop: Bool) -> SKPhysicsBody {
+        let topBottomOffset = CGFloat((tileSize.height - fractionSize.height) * 0.5) * (isTop ? -1 : 1)
         let position = CGPoint(
             x: CGFloat(Double(end) - Double(end - start) * 0.5) * tileSize.width - halfSize.width + (tileSize.width * 0.5),
-            y: CGFloat(row) * tileSize.height - halfSize.height + (tileSize.height * 0.5))
-        let size = CGSize(width: CGFloat(end - start + 1) * tileSize.width, height: tileSize.height)
+            y: CGFloat(row) * tileSize.height - halfSize.height + (tileSize.height * 0.5) + topBottomOffset)
+        let size = CGSize(width: CGFloat(end - start + 1) * tileSize.width, height: fractionSize.height)
         return SKPhysicsBody(rectangleOf: size, center: position)
     }
 }
