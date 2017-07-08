@@ -17,11 +17,12 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     let animationFrameEnd: [UInt] = [5, 10, 5, 9, 2, 2]
     let animationName: [String] = ["Idle", "Run", "Jump", "Jump", "Crouch", "Shoot"]
     let animationRepeats: [Bool] = [true, true, false, false, false, false]
+    let physicsSize = CGSize(width: 8.0, height: 16.0)
     let playerRadius: CGFloat = 8.0
-    let movementSpeed: CGFloat = 60.0
+    let movementSpeed: CGFloat = 150.0
     let jumpSpeed: CGFloat = 400.0
     
-    var footNode: SKNode!
+    var gunNode: SKNode!
     var animations = [SKAction]()
     var currentAnimation: SKAction?
     var direction: CGFloat = 0
@@ -39,12 +40,11 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     }
     
     func didMoveToScene(){
-        footNode = childNode(withName: "FootNode")!
+        gunNode = childNode(withName: "GunNode")!
         setupPhysics()
     }
     
     func playAnimation(_ animationIndex: PlayerAnimation){
-        
         if animationIndex != .end {
             let animation = animations[animationIndex.rawValue]
             if currentAnimation == nil || currentAnimation != animation{
@@ -52,19 +52,17 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
                 currentAnimation = animation
             }
         }
-        
     }
     
     func setupPhysics(){
-        physicsBody = SKPhysicsBody(bodies:
-            [SKPhysicsBody(circleOfRadius: playerRadius),
-             SKPhysicsBody(rectangleOf: CGSize(width: 9, height: 9), center: (childNode(withName: "FootNode")!).position)])
+        physicsBody = SKPhysicsBody(rectangleOf: physicsSize, center: childNode(withName: "PhysicsCenter")!.position)
         physicsBody?.allowsRotation = false
-        physicsBody?.collisionBitMask = PhysicsCategory.Platform
-        physicsBody?.fieldBitMask = PhysicsCategory.Platform
+        physicsBody?.collisionBitMask = PhysicsCategory.Platform | PhysicsCategory.Edge
+        physicsBody?.fieldBitMask = PhysicsCategory.Platform | PhysicsCategory.Edge
         physicsBody?.categoryBitMask = PhysicsCategory.Player
-        physicsBody?.friction = 0
-        physicsBody?.linearDamping = 0
+        physicsBody?.contactTestBitMask = PhysicsCategory.None
+        physicsBody?.friction = 0.0
+        physicsBody?.linearDamping = 0.1
         physicsBody?.restitution = 0
     }
     
@@ -87,28 +85,44 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     func stop(){
         direction = 0
         physicsBody?.velocity = CGVector(dx: 0, dy: (physicsBody?.velocity.dy)!)
-        if currentAction == .run {
-            currentAction = .idle
-        }
-
+        currentAction = .idle
     }
     
-    func shoot(at location: CGPoint){
-        let angle = atan2(location.y, location.x)
-        print("\(location)")
-        print("\(angle)")
-        let turnAction = SKAction.run(){
-            self.currentAction = .shoot
-            self.zRotation = angle
-            self.playAnimation(.shoot)
+    func shoot(at direction: CGVector){
+        let angle = atan2(direction.dy, direction.dx)
+        let spriteAngle: CGFloat?
+        
+        if abs(angle) > CGFloat(Double.pi * 0.5) {
+            xScale = -1
+             spriteAngle = (angle < 0 ? 1 : -1) * CGFloat(Double.pi) + angle
         }
-//        let returnAction = SKAction.run(){
-//            self.zRotation = 0
-//            self.currentAction = .idle
-//        }
-//        
-//        let shootAction = SKAction.sequence([turnAction, returnAction])
-        run(turnAction);
+        else{
+            xScale = 1
+            spriteAngle = angle
+        }
+        
+        self.currentAction = .shoot
+        
+        let resetAction = SKAction.run(){
+            self.currentAction = .jumpDown
+        }
+        
+        let rotateAction = SKAction.rotate(byAngle: spriteAngle!, duration: TimeInterval(abs(CGFloat(0.04) * spriteAngle!)))
+        let reverseRotateAction = rotateAction.reversed()
+        
+        let recoilMagnitude:CGFloat = -2.0
+        let recoilVector = CGVector(dx: cos(angle) * recoilMagnitude, dy: sin(angle) * recoilMagnitude)
+        
+        let shootBullet = SKAction.run(){
+            self.playAnimation(.shoot)
+            (self.parent as! GameScene).spawnBullet(at: self.convert(self.gunNode.position, to: self.parent!), angle: angle)
+            self.physicsBody?.applyImpulse(recoilVector)
+        }
+        
+        let rotateSequence = SKAction.sequence([
+            rotateAction, shootBullet, reverseRotateAction, resetAction])
+        
+        run(rotateSequence);
     }
     
     func update(_ deltaTime: TimeInterval){
