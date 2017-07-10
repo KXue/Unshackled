@@ -22,6 +22,8 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     let movementSpeed: CGFloat = 150.0
     let jumpSpeed: CGFloat = 400.0
     
+    var numBullets: UInt = 3
+    var maxBullets: UInt = 3
     var gunNode: SKNode!
     var animations = [SKAction]()
     var currentAnimation: SKAction?
@@ -60,7 +62,7 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
         physicsBody?.collisionBitMask = PhysicsCategory.Platform | PhysicsCategory.Edge
         physicsBody?.fieldBitMask = PhysicsCategory.Platform | PhysicsCategory.Edge
         physicsBody?.categoryBitMask = PhysicsCategory.Player
-        physicsBody?.contactTestBitMask = PhysicsCategory.None
+        physicsBody?.contactTestBitMask = PhysicsCategory.Platform | PhysicsCategory.Edge | PhysicsCategory.Goal
         physicsBody?.friction = 0.0
         physicsBody?.linearDamping = 0.1
         physicsBody?.restitution = 0
@@ -89,40 +91,52 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     }
     
     func shoot(at direction: CGVector){
-        let angle = atan2(direction.dy, direction.dx)
-        let spriteAngle: CGFloat?
-        
-        if abs(angle) > CGFloat(Double.pi * 0.5) {
-            xScale = -1
-             spriteAngle = (angle < 0 ? 1 : -1) * CGFloat(Double.pi) + angle
+        if numBullets != 0 {
+            let angle = atan2(direction.dy, direction.dx)
+            let spriteAngle: CGFloat?
+            
+            if abs(angle) > CGFloat(Double.pi * 0.5) {
+                xScale = -1
+                spriteAngle = (angle < 0 ? 1 : -1) * CGFloat(Double.pi) + angle
+            }
+            else{
+                xScale = 1
+                spriteAngle = angle
+            }
+            
+            self.currentAction = .shoot
+            
+            let resetAction = SKAction.run(){
+                self.currentAction = .jumpDown
+            }
+            
+            let rotateAction = SKAction.rotate(byAngle: spriteAngle!, duration: TimeInterval(abs(CGFloat(0.04) * spriteAngle!)))
+            let reverseRotateAction = rotateAction.reversed()
+            
+            let recoilMagnitude:CGFloat = -2.0
+            let recoilVector = CGVector(dx: cos(angle) * recoilMagnitude, dy: sin(angle) * recoilMagnitude)
+            
+            let shootBullet = SKAction.run(){
+                self.playAnimation(.shoot)
+                (self.parent as! GameScene).spawnBullet(at: self.convert(self.gunNode.position, to: self.parent!), angle: angle)
+                self.physicsBody?.applyImpulse(recoilVector)
+            }
+            
+            let rotateSequence = SKAction.sequence([
+                rotateAction, shootBullet, reverseRotateAction, resetAction])
+            
+            run(rotateSequence);
+            numBullets -= 1
         }
-        else{
-            xScale = 1
-            spriteAngle = angle
-        }
-        
-        self.currentAction = .shoot
-        
-        let resetAction = SKAction.run(){
-            self.currentAction = .jumpDown
-        }
-        
-        let rotateAction = SKAction.rotate(byAngle: spriteAngle!, duration: TimeInterval(abs(CGFloat(0.04) * spriteAngle!)))
-        let reverseRotateAction = rotateAction.reversed()
-        
-        let recoilMagnitude:CGFloat = -2.0
-        let recoilVector = CGVector(dx: cos(angle) * recoilMagnitude, dy: sin(angle) * recoilMagnitude)
-        
-        let shootBullet = SKAction.run(){
-            self.playAnimation(.shoot)
-            (self.parent as! GameScene).spawnBullet(at: self.convert(self.gunNode.position, to: self.parent!), angle: angle)
-            self.physicsBody?.applyImpulse(recoilVector)
-        }
-        
-        let rotateSequence = SKAction.sequence([
-            rotateAction, shootBullet, reverseRotateAction, resetAction])
-        
-        run(rotateSequence);
+    }
+    
+    func resetBullets(){
+        numBullets = maxBullets
+    }
+    
+    func increaseAmmo(by amount: UInt){
+        maxBullets += amount
+        numBullets += amount
     }
     
     func update(_ deltaTime: TimeInterval){

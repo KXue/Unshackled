@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		016F70C61F0ECC0D00E160BF /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 016F70C51F0ECC0D00E160BF /* Bullet.swift */; };
 		016F70C81F0EE95100E160BF /* Bullet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 016F70C71F0EE95100E160BF /* Bullet.sks */; };
+		019A75501F140F670057BEC5 /* Finish.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754A1F140F670057BEC5 /* Finish.wav */; };
+		019A75511F140F670057BEC5 /* Jump.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754B1F140F670057BEC5 /* Jump.wav */; };
+		019A75521F140F670057BEC5 /* Land.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754C1F140F670057BEC5 /* Land.wav */; };
+		019A75531F140F670057BEC5 /* Lost.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754D1F140F670057BEC5 /* Lost.wav */; };
+		019A75541F140F670057BEC5 /* Music.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754E1F140F670057BEC5 /* Music.wav */; };
+		019A75551F140F670057BEC5 /* Shoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754F1F140F670057BEC5 /* Shoot.wav */; };
 		01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01AD9D9A1EFB36E900C444E9 /* TileSet.sks */; };
 		01E6DBB91EF9ABBF00DC6837 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */; };
 		01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */; };
@@ -43,6 +49,12 @@
 /* Begin PBXFileReference section */
 		016F70C51F0ECC0D00E160BF /* Bullet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
 		016F70C71F0EE95100E160BF /* Bullet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Bullet.sks; sourceTree = "<group>"; };
+		019A754A1F140F670057BEC5 /* Finish.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Finish.wav; sourceTree = "<group>"; };
+		019A754B1F140F670057BEC5 /* Jump.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Jump.wav; sourceTree = "<group>"; };
+		019A754C1F140F670057BEC5 /* Land.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Land.wav; sourceTree = "<group>"; };
+		019A754D1F140F670057BEC5 /* Lost.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Lost.wav; sourceTree = "<group>"; };
+		019A754E1F140F670057BEC5 /* Music.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Music.wav; sourceTree = "<group>"; };
+		019A754F1F140F670057BEC5 /* Shoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Shoot.wav; sourceTree = "<group>"; };
 		01AD9D9A1EFB36E900C444E9 /* TileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TileSet.sks; sourceTree = "<group>"; };
 		01E6DBB51EF9ABBF00DC6837 /* Unshackled.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unshackled.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +100,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		019A75481F1403760057BEC5 /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Levels;
+			sourceTree = "<group>";
+		};
+		019A75491F140F670057BEC5 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				019A754A1F140F670057BEC5 /* Finish.wav */,
+				019A754B1F140F670057BEC5 /* Jump.wav */,
+				019A754C1F140F670057BEC5 /* Land.wav */,
+				019A754D1F140F670057BEC5 /* Lost.wav */,
+				019A754E1F140F670057BEC5 /* Music.wav */,
+				019A754F1F140F670057BEC5 /* Shoot.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		01E6DBAC1EF9ABBF00DC6837 = {
 			isa = PBXGroup;
 			children = (
@@ -111,6 +143,8 @@
 		01E6DBB71EF9ABBF00DC6837 /* Unshackled */ = {
 			isa = PBXGroup;
 			children = (
+				019A75491F140F670057BEC5 /* Sounds */,
+				019A75481F1403760057BEC5 /* Levels */,
 				0AAAEFB71F003D1A003F9FA9 /* GameObjects */,
 				01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */,
 				01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */,
@@ -264,9 +298,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				019A75511F140F670057BEC5 /* Jump.wav in Resources */,
+				019A75501F140F670057BEC5 /* Finish.wav in Resources */,
+				019A75551F140F670057BEC5 /* Shoot.wav in Resources */,
 				01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */,
 				016F70C81F0EE95100E160BF /* Bullet.sks in Resources */,
+				019A75541F140F670057BEC5 /* Music.wav in Resources */,
+				019A75521F140F670057BEC5 /* Land.wav in Resources */,
 				01E6DBC41EF9ABC000DC6837 /* Main.storyboard in Resources */,
+				019A75531F140F670057BEC5 /* Lost.wav in Resources */,
 				01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */,
 				01E6DBC61EF9ABC000DC6837 /* Assets.xcassets in Resources */,
 				01E6DBC91EF9ABC000DC6837 /* LaunchScreen.storyboard in Resources */,

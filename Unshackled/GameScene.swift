@@ -15,6 +15,8 @@ struct PhysicsCategory{
     static let Platform: UInt32         = 0b10
     static let Bullet: UInt32           = 0b100
     static let Edge: UInt32             = 0b1000
+    static let Ammo: UInt32             = 0b10000
+    static let Goal: UInt32             = 0b100000
     static let All: UInt32              = UInt32.max
 }
 
@@ -23,6 +25,7 @@ class GameScene: SKScene {
     let topBottomTileReductionFraction:CGFloat = 0.55
     
     //MARK Member Vars
+    var goalNode: SKSpriteNode!
     var mapNode: SKTileMapNode!
     var visibleSize: CGSize!
     var player: Player!
@@ -33,7 +36,7 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         setupVisibleSize()
-        setupTextureFilter(self)
+        setupTextureFilter()
         
         backgroundColor = UIColor(colorLiteralRed: 0.318, green: 0.659, blue: 1.0, alpha: 1.0)
         physicsWorld.gravity.dy *= 0.75
@@ -54,6 +57,8 @@ class GameScene: SKScene {
         })
         
         player = childNode(withName: "Player") as! Player
+        goalNode = childNode(withName: "Goal") as! SKSpriteNode
+        setupGoal(goalNode)
         
         addGestureRecognizers(to: view)
         setupCamera()
@@ -63,7 +68,6 @@ class GameScene: SKScene {
         let deltaTime = lastTime > 0 ? currentTime - lastTime : 0
         lastTime = currentTime
         player.update(deltaTime)
-//        print("\(camera?.position)")
     }
     
     //MARK: Gesture Recognizers
@@ -122,6 +126,7 @@ class GameScene: SKScene {
         let touchLocation = convertPoint(fromView: sender.location(in: sender.view))
         player.shoot(at: CGVector(dx: touchLocation.x - player.position.x, dy: touchLocation.y - player.position.y))
     }
+    
     //MARK: Setup Functions
     
     func setupCamera(){
@@ -138,14 +143,16 @@ class GameScene: SKScene {
         let yRange = SKRange(lowerLimit: constraintRect.minY,
                              upperLimit: constraintRect.maxY)
         let edgeConstraint = SKConstraint.positionX(xRange, y: yRange)
-        print("\(visibleSize.width * 0.5 * camera.xScale)")
-        print(mapNode.frame)
-        print("\(constraintRect)")
-        print(visibleSize)
-        print(view!.frame.size)
         edgeConstraint.referenceNode = mapNode
         
         camera.constraints = [playerConstraint, edgeConstraint]
+    }
+    
+    func setupGoal(_ goal: SKSpriteNode){
+        goal.physicsBody?.contactTestBitMask = PhysicsCategory.Player
+        goal.physicsBody?.categoryBitMask = PhysicsCategory.Goal
+        goal.physicsBody?.fieldBitMask = PhysicsCategory.None
+        goal.physicsBody?.collisionBitMask = PhysicsCategory.None
     }
     
     func setupPhysics(){
@@ -156,18 +163,12 @@ class GameScene: SKScene {
         attachTileMapPhysics(map: mapNode)
     }
     
-    func setupTextureFilter(_ currentNode:SKNode){
-        currentNode.enumerateChildNodes(withName: "//*", using: {node, _ in
+    func setupTextureFilter(){
+        enumerateChildNodes(withName: "//*", using: {node, _ in
             if let spriteNode = node as? SKSpriteNode{
-                if let texture = spriteNode.texture{
-                    texture.filteringMode = .nearest
-                }
+                spriteNode.texture?.filteringMode = .nearest
             }
-            self.setupTextureFilter(node)
         })
-    }
-    func recursiveSetTextureFilter(node:SKNode){
-        
     }
     
     func setupVisibleSize(){
@@ -185,39 +186,8 @@ class GameScene: SKScene {
             visibleSize = CGSize(width: width * camera!.xScale, height: height * camera!.yScale)
         }
     }
-    //MARK: TileMap Physics
     
-    func alternateTileMapPhysics(map: SKTileMapNode){
-        let tileMap = map
-        let tileSize = tileMap.tileSize
-        let halfWidth = CGFloat(tileMap.numberOfColumns) * 0.5 * tileSize.width
-        let halfHeight = CGFloat(tileMap.numberOfRows) * 0.5 * tileSize.height
-        
-        
-        for col in 0..<tileMap.numberOfColumns {
-            for row in 0..<tileMap.numberOfRows {
-                if let tileDefinition = tileMap.tileDefinition(atColumn: col, row: row) {
-                    if tileDefinition.name!.range(of: "C") == nil{
-                        let x = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width * 0.5)
-                        let y = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height * 0.5)
-                        let tileNode = SKNode()
-                        tileNode.position = CGPoint(x: x, y: y)
-                        tileNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                        
-                        tileNode.physicsBody?.isDynamic = false
-                        tileNode.physicsBody?.categoryBitMask = PhysicsCategory.Platform
-                        tileNode.physicsBody?.collisionBitMask = PhysicsCategory.Player
-                        tileNode.physicsBody?.contactTestBitMask = PhysicsCategory.Player
-                        tileNode.physicsBody?.fieldBitMask = PhysicsCategory.None
-                        
-                        tileNode.yScale = tileMap.yScale
-                        tileNode.xScale = tileMap.xScale
-                        tileMap.addChild(tileNode)
-                    }
-                }
-            }
-        }
-    }
+    //MARK: TileMap Physics
     
     func attachTileMapPhysics(map: SKTileMapNode){
         let worldPhysicsNode = SKNode()
@@ -282,7 +252,7 @@ class GameScene: SKScene {
         worldPhysicsNode.physicsBody?.fieldBitMask = PhysicsCategory.None
         map.addChild(worldPhysicsNode)
     }
-//     body = SKPhysicsBody(rectangleOf: topBottomTileSize, center: CGPoint(x:x, y: y + topBottomOffset))
+
     func createRowTiles(start: Int, end: Int, row: Int, tileSize: CGSize, halfSize: CGSize, fractionSize: CGSize, isTop: Bool) -> SKPhysicsBody {
         let topBottomOffset = CGFloat((tileSize.height - fractionSize.height) * 0.5) * (isTop ? -1 : 1)
         let position = CGPoint(
@@ -303,12 +273,31 @@ class GameScene: SKScene {
         bullet.setVelocity(angle: angle)
         addChild(bullet)
     }
+    
+    func winLevel(){
+        
+    }
 }
 extension GameScene : SKPhysicsContactDelegate{
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.categoryBitMask == PhysicsCategory.Bullet || contact.bodyB.categoryBitMask == PhysicsCategory.Bullet{
             let bullet = contact.bodyA.categoryBitMask == PhysicsCategory.Bullet ? (contact.bodyA.node as! Bullet) : (contact.bodyB.node as! Bullet)
             bullet.onHit()
+        }
+        if contact.bodyA.categoryBitMask == PhysicsCategory.Player || contact.bodyB.categoryBitMask == PhysicsCategory.Player{
+            let other = contact.bodyA.categoryBitMask == PhysicsCategory.Player ? contact.bodyB : contact.bodyA
+            switch other.categoryBitMask {
+            case PhysicsCategory.Platform:
+                player.resetBullets()
+            case PhysicsCategory.Edge:
+                player.resetBullets()
+            case PhysicsCategory.Goal:
+                winLevel()
+            case PhysicsCategory.Ammo:
+                player.increaseAmmo(by: 1)
+            default:
+                break
+            }
         }
     }
 }
