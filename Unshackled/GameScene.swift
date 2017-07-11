@@ -16,13 +16,20 @@ struct PhysicsCategory{
     static let Bullet: UInt32           = 0b100
     static let Edge: UInt32             = 0b1000
     static let Ammo: UInt32             = 0b10000
-    static let Goal: UInt32             = 0b100000
+    static let Hazard: UInt32           = 0b100000
+    static let Goal: UInt32             = 0b1000000
     static let All: UInt32              = UInt32.max
 }
 
 class GameScene: SKScene {
     //MARK: Member Lets
     let topBottomTileReductionFraction:CGFloat = 0.55
+    let soundJump = SKAction.playSoundFileNamed("Jump.wav", waitForCompletion: false)
+    let soundLand = SKAction.playSoundFileNamed("Land.wav", waitForCompletion: false)
+    let soundShoot = SKAction.playSoundFileNamed("Shoot.wav", waitForCompletion: false)
+    let soundWin = SKAction.playSoundFileNamed("Finish.wav", waitForCompletion: true)
+    let soundLose = SKAction.playSoundFileNamed("Lost.wav", waitForCompletion: true)
+
     
     //MARK Member Vars
     var goalNode: SKSpriteNode!
@@ -31,6 +38,8 @@ class GameScene: SKScene {
     var player: Player!
     var sourceBullet: Bullet!
     var lastTime:TimeInterval = 0
+    var startingPosition: CGPoint!
+    var isPlaying: Bool = true
     
     //MARK: Override Functions
     
@@ -57,11 +66,14 @@ class GameScene: SKScene {
         })
         
         player = childNode(withName: "Player") as! Player
+        startingPosition = player.position
         goalNode = childNode(withName: "Goal") as! SKSpriteNode
         setupGoal(goalNode)
         
         addGestureRecognizers(to: view)
         setupCamera()
+        
+        playBackgroundMusic(name: "Mercury.wav")
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -108,23 +120,32 @@ class GameScene: SKScene {
     //MARK: Gesture Handlers
     
     func didSwipe(sender:UISwipeGestureRecognizer){
-        switch sender.direction{
-        case UISwipeGestureRecognizerDirection.left:
-            player.startRunning(isRight: false)
-        case UISwipeGestureRecognizerDirection.right:
-            player.startRunning(isRight: true)
-        case UISwipeGestureRecognizerDirection.up:
-            player.startJumping()
-        case UISwipeGestureRecognizerDirection.down:
-            player.stop()
-        default:
-            break
+        if isPlaying {
+            switch sender.direction{
+            case UISwipeGestureRecognizerDirection.left:
+                player.startRunning(isRight: false)
+            case UISwipeGestureRecognizerDirection.right:
+                player.startRunning(isRight: true)
+            case UISwipeGestureRecognizerDirection.up:
+                if player.startJumping() {
+                    run(soundJump)
+                }
+            case UISwipeGestureRecognizerDirection.down:
+                player.stop()
+            default:
+                break
+            }
         }
     }
     
     func didTap(sender: UITapGestureRecognizer){
-        let touchLocation = convertPoint(fromView: sender.location(in: sender.view))
-        player.shoot(at: CGVector(dx: touchLocation.x - player.position.x, dy: touchLocation.y - player.position.y))
+        if isPlaying{
+            let touchLocation = convertPoint(fromView: sender.location(in: sender.view))
+            player.shoot(at: CGVector(dx: touchLocation.x - player.position.x, dy: touchLocation.y - player.position.y))
+        }
+        else{
+            resetLevel()
+        }
     }
     
     //MARK: Setup Functions
@@ -158,6 +179,9 @@ class GameScene: SKScene {
     func setupPhysics(){
         mapNode.physicsBody = SKPhysicsBody(edgeLoopFrom: mapNode.frame)
         mapNode.physicsBody?.categoryBitMask = PhysicsCategory.Edge
+        mapNode.physicsBody?.collisionBitMask = PhysicsCategory.Player
+        mapNode.physicsBody?.fieldBitMask = PhysicsCategory.Player
+        mapNode.physicsBody?.contactTestBitMask = PhysicsCategory.Player | PhysicsCategory.Bullet
         mapNode.physicsBody?.friction = 0.0
         physicsWorld.contactDelegate = self
         attachTileMapPhysics(map: mapNode)
@@ -264,7 +288,46 @@ class GameScene: SKScene {
     
     //MARK: Misc Functions
     
-    func spawnBullet(at position: CGPoint, angle: CGFloat){
+    func loseLevel() {
+        if isPlaying {
+            stopGame()
+            run(soundLose)
+            player.physicsBody?.categoryBitMask = PhysicsCategory.None
+            player.physicsBody?.fieldBitMask = PhysicsCategory.None
+            player.physicsBody?.collisionBitMask = PhysicsCategory.None
+            player.run(player.createDeathAnimation(viewHeight: visibleSize.height))
+            print("Lose")
+        }
+    }
+    
+    func nextLevel() {
+    }
+    
+    func stopGame(){
+        isPlaying = false
+        player.stop()
+        stopBackgroundMusic()
+        camera?.constraints = []
+    }
+    
+    func playBackgroundMusic(name: String) {
+        stopBackgroundMusic()
+        let music = SKAudioNode(fileNamed: name)
+        music.name = "backgroundMusic"
+        music.autoplayLooped = true
+        addChild(music)
+    }
+    
+    func resetLevel() {
+        setupCamera()
+        player.setupPhysics()
+        player.position = startingPosition
+        isPlaying = true
+        playBackgroundMusic(name: "Mercury.wav")
+    }
+    
+    
+    func spawnBullet(at position: CGPoint, angle: CGFloat) {
         let bullet = sourceBullet.copy() as! Bullet
         bullet.didMoveToScene()
         bullet.createAnimations(frameTime: 0.02)
@@ -272,10 +335,21 @@ class GameScene: SKScene {
         bullet.zRotation = angle
         bullet.setVelocity(angle: angle)
         addChild(bullet)
+        run(soundShoot)
     }
     
-    func winLevel(){
-        
+    func stopBackgroundMusic() {
+        if let backgroundMusic = childNode(withName: "backgroundMusic"){
+            backgroundMusic.removeFromParent()
+        }
+    }
+    
+    func winLevel() {
+        if isPlaying {
+            stopGame()
+            run(soundWin)
+            print("Win")
+        }
     }
 }
 extension GameScene : SKPhysicsContactDelegate{
@@ -289,12 +363,17 @@ extension GameScene : SKPhysicsContactDelegate{
             switch other.categoryBitMask {
             case PhysicsCategory.Platform:
                 player.resetBullets()
+                run(soundLand)
             case PhysicsCategory.Edge:
                 player.resetBullets()
+                if player.frame.minY - mapNode.frame.minY <= 5 {
+                    loseLevel()
+                }
             case PhysicsCategory.Goal:
                 winLevel()
             case PhysicsCategory.Ammo:
                 player.increaseAmmo(by: 1)
+                
             default:
                 break
             }

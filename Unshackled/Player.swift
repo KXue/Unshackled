@@ -41,9 +41,22 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
         }
     }
     
+    func createDeathAnimation(viewHeight: CGFloat) -> SKAction{
+        let deathAnimationUp = SKAction.moveBy(x: 0, y: viewHeight * 0.3, duration: 0.3)
+        deathAnimationUp.timingMode = .easeOut
+        let deathAnimationDown = SKAction.moveBy(x: 0, y: -viewHeight, duration: 0.9)
+        deathAnimationDown.timingMode = .easeIn
+        return SKAction.sequence([deathAnimationUp, deathAnimationDown])
+    }
+    
     func didMoveToScene(){
         gunNode = childNode(withName: "GunNode")!
         setupPhysics()
+    }
+    
+    func increaseAmmo(by amount: UInt){
+        maxBullets += amount
+        numBullets += amount
     }
     
     func playAnimation(_ animationIndex: PlayerAnimation){
@@ -54,6 +67,10 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
                 currentAnimation = animation
             }
         }
+    }
+    
+    func resetBullets(){
+        numBullets = maxBullets
     }
     
     func setupPhysics(){
@@ -77,11 +94,14 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
         }
     }
     
-    func startJumping(){
+    func startJumping() -> Bool{
+        var retVal = false
         if currentAction != .jumpUp && currentAction != .jumpDown{
             physicsBody?.velocity = CGVector(dx: (physicsBody?.velocity.dx)!, dy: jumpSpeed)
             currentAction = .jumpUp
+            retVal = true
         }
+        return retVal
     }
     
     func stop(){
@@ -128,15 +148,6 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
             run(rotateSequence);
             numBullets -= 1
         }
-    }
-    
-    func resetBullets(){
-        numBullets = maxBullets
-    }
-    
-    func increaseAmmo(by amount: UInt){
-        maxBullets += amount
-        numBullets += amount
     }
     
     func update(_ deltaTime: TimeInterval){

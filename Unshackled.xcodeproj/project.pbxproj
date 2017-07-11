@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		016F70C61F0ECC0D00E160BF /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 016F70C51F0ECC0D00E160BF /* Bullet.swift */; };
 		016F70C81F0EE95100E160BF /* Bullet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 016F70C71F0EE95100E160BF /* Bullet.sks */; };
+		01773E0D1F15551900EE2651 /* Venus.wav in Resources */ = {isa = PBXBuildFile; fileRef = 01773E0C1F15551900EE2651 /* Venus.wav */; };
+		01773E0F1F15552B00EE2651 /* Map.wav in Resources */ = {isa = PBXBuildFile; fileRef = 01773E0E1F15552B00EE2651 /* Map.wav */; };
+		01773E111F1555B500EE2651 /* Mercury.wav in Resources */ = {isa = PBXBuildFile; fileRef = 01773E101F1555B500EE2651 /* Mercury.wav */; };
 		019A75501F140F670057BEC5 /* Finish.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754A1F140F670057BEC5 /* Finish.wav */; };
 		019A75511F140F670057BEC5 /* Jump.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754B1F140F670057BEC5 /* Jump.wav */; };
 		019A75521F140F670057BEC5 /* Land.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754C1F140F670057BEC5 /* Land.wav */; };
@@ -49,6 +52,9 @@
 /* Begin PBXFileReference section */
 		016F70C51F0ECC0D00E160BF /* Bullet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
 		016F70C71F0EE95100E160BF /* Bullet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Bullet.sks; sourceTree = "<group>"; };
+		01773E0C1F15551900EE2651 /* Venus.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Venus.wav; sourceTree = "<group>"; };
+		01773E0E1F15552B00EE2651 /* Map.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Map.wav; sourceTree = "<group>"; };
+		01773E101F1555B500EE2651 /* Mercury.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Mercury.wav; sourceTree = "<group>"; };
 		019A754A1F140F670057BEC5 /* Finish.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Finish.wav; sourceTree = "<group>"; };
 		019A754B1F140F670057BEC5 /* Jump.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Jump.wav; sourceTree = "<group>"; };
 		019A754C1F140F670057BEC5 /* Land.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Land.wav; sourceTree = "<group>"; };
@@ -110,6 +116,9 @@
 		019A75491F140F670057BEC5 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				01773E101F1555B500EE2651 /* Mercury.wav */,
+				01773E0E1F15552B00EE2651 /* Map.wav */,
+				01773E0C1F15551900EE2651 /* Venus.wav */,
 				019A754A1F140F670057BEC5 /* Finish.wav */,
 				019A754B1F140F670057BEC5 /* Jump.wav */,
 				019A754C1F140F670057BEC5 /* Land.wav */,
@@ -298,8 +307,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01773E111F1555B500EE2651 /* Mercury.wav in Resources */,
 				019A75511F140F670057BEC5 /* Jump.wav in Resources */,
 				019A75501F140F670057BEC5 /* Finish.wav in Resources */,
+				01773E0D1F15551900EE2651 /* Venus.wav in Resources */,
+				01773E0F1F15552B00EE2651 /* Map.wav in Resources */,
 				019A75551F140F670057BEC5 /* Shoot.wav in Resources */,
 				01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */,
 				016F70C81F0EE95100E160BF /* Bullet.sks in Resources */,
