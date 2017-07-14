@@ -265,54 +265,32 @@ class GameScene: SKScene {
     func attachTileMapPhysics(map: SKTileMapNode){
         let worldPhysicsNode = SKNode()
         worldPhysicsNode.position = CGPoint(x:0, y:0)
+        
         let tileMap = map
         let tileSize = tileMap.tileSize
-        let halfWidth = CGFloat(tileMap.numberOfColumns) * 0.5 * tileSize.width
-        let halfHeight = CGFloat(tileMap.numberOfRows) * 0.5 * tileSize.height
+    
         let topBottomTileSize = CGSize(width: tileSize.width, height: tileSize.height * topBottomTileReductionFraction)
+        
+        var checkedTiles:[[Bool]] = Array(repeating: Array(repeating: false, count: tileMap.numberOfColumns), count: tileMap.numberOfRows)
         var physicsBodies = [SKPhysicsBody]()
-        var start:Int = -1
-        var end:Int = -1
-        var isTop = false
         
         for row in 0..<tileMap.numberOfRows {
-            
             for col in 0..<tileMap.numberOfColumns {
+                //if tile exists
                 if let tileDefinition = tileMap.tileDefinition(atColumn: col, row: row){
-                    if tileDefinition.name!.range(of: "C") == nil{
+                    //if is not center tile
+                    if tileDefinition.name!.range(of: "C") == nil && !checkedTiles[row][col]{
+                        //if tile is top or bottom tile
                         if tileDefinition.name!.range(of:"TilesT") != nil  || tileDefinition.name!.range(of:"TilesB") != nil {
-                            if start == -1 {
-                                start = col
-                                end = col
-                            }
-                            else{
-                                end = col
-                            }
-                            isTop = tileDefinition.name!.range(of:"TilesT") != nil
-                            
+                            //keep checking horizontally
+                            physicsBodies.append(searchIn(row: row, tileMap: tileMap, checkedTiles: &checkedTiles, start: col, fractionSize: topBottomTileSize))
                         }else{
-                            let x = CGFloat(col) * tileSize.width - halfWidth + (tileSize.width * 0.5)
-                            let y = CGFloat(row) * tileSize.height - halfHeight + (tileSize.height * 0.5)
-                            physicsBodies.append(SKPhysicsBody(rectangleOf: tileSize, center: CGPoint(x:x, y:y)))
-                            start = -1
-                            end = -1
+                            physicsBodies.append(searchIn(col: col, tileMap: tileMap, checkedTiles: &checkedTiles, start: row))
+                           //keep checking vertically
                         }
-                    } else if start != -1 {
-                        physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
-                        start = -1
-                        end = -1
                     }
-                }else if start != -1 {
-                    //make rectangle here
-                    physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
-                    start = -1
-                    end = -1
                 }
-            }
-            if start != -1{
-                physicsBodies.append(createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize:CGSize(width: halfWidth, height: halfHeight),fractionSize: topBottomTileSize, isTop: isTop))
-                start = -1
-                end = -1
+                checkedTiles[row][col] = true
             }
         }
         worldPhysicsNode.physicsBody = SKPhysicsBody(bodies: physicsBodies)
@@ -326,7 +304,59 @@ class GameScene: SKScene {
         worldPhysicsNode.physicsBody?.fieldBitMask = PhysicsCategory.None
         map.addChild(worldPhysicsNode)
     }
+    func searchIn(col: Int, tileMap: SKTileMapNode, checkedTiles: inout [[Bool]], start: Int) -> SKPhysicsBody{
+        var end = start
+        let tileSize = tileMap.tileSize
+        let halfSize = CGSize(width: CGFloat(tileMap.numberOfColumns) * 0.5 * tileSize.width, height: CGFloat(tileMap.numberOfRows) * 0.5 * tileSize.height)
+        
+        for row in start..<tileMap.numberOfRows {
+            if let tileDefinition = tileMap.tileDefinition(atColumn: col, row: row){
+                // if not top or bottom
+                if tileDefinition.name!.range(of:"TilesL") == nil  && tileDefinition.name!.range(of:"TilesR") == nil || checkedTiles[row][col]{
+                    break
+                }
+            }
+            else{
+                break
+            }
+            checkedTiles[row][col] = true
+            end = row
+        }
+        return createColTiles(start: start, end: end, col: col, tileSize: tileSize, halfSize: halfSize)
+    }
+    func searchIn(row: Int, tileMap: SKTileMapNode, checkedTiles: inout [[Bool]], start: Int, fractionSize: CGSize) -> SKPhysicsBody{
+        var end = start
+        let tileSize = tileMap.tileSize
+        let halfSize = CGSize(width: CGFloat(tileMap.numberOfColumns) * 0.5 * tileSize.width, height: CGFloat(tileMap.numberOfRows) * 0.5 * tileSize.height)
 
+        var lastTileDefintion:SKTileDefinition!
+        for col in start..<tileMap.numberOfColumns{
+            if let tileDefinition = tileMap.tileDefinition(atColumn: col, row: row){
+                // if not laft or right
+                if tileDefinition.name!.range(of:"TilesT") == nil  && tileDefinition.name!.range(of:"TilesB") == nil || checkedTiles[row][col]{
+                    break
+                }
+                else{
+                    lastTileDefintion = tileDefinition
+                }
+            }
+            else{
+                break
+            }
+            checkedTiles[row][col] = true
+            end = col
+        }
+        return createRowTiles(start: start, end: end, row: row, tileSize: tileSize, halfSize: halfSize, fractionSize: fractionSize, isTop: lastTileDefintion.name!.range(of:"TilesT") != nil)
+    }
+    
+    func createColTiles(start: Int, end: Int, col: Int, tileSize: CGSize, halfSize: CGSize) -> SKPhysicsBody{
+        let position = CGPoint(
+            x: CGFloat(col) * tileSize.width - halfSize.width + (tileSize.width * 0.5),
+            y: CGFloat(Double(end) - Double(end - start) * 0.5) * tileSize.height - halfSize.height + (tileSize.height * 0.5))
+        let size = CGSize(width: tileSize.width, height: CGFloat(end - start + 1) * tileSize.height)
+        return SKPhysicsBody(rectangleOf: size, center: position)
+    }
+    
     func createRowTiles(start: Int, end: Int, row: Int, tileSize: CGSize, halfSize: CGSize, fractionSize: CGSize, isTop: Bool) -> SKPhysicsBody {
         let topBottomOffset = CGFloat((tileSize.height - fractionSize.height) * 0.5) * (isTop ? -1 : 1)
         let position = CGPoint(
