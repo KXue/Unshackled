@@ -22,6 +22,8 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     let movementSpeed: CGFloat = 150.0
     let jumpSpeed: CGFloat = 400.0
     
+    var grounded = true
+    var shotBullet = false
     var numBullets: UInt = 3
     var maxBullets: UInt = 3
     var gunNode: SKNode!
@@ -92,11 +94,14 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
         if currentAction == .idle{
             currentAction = .run
         }
+        shotBullet = false
     }
     
     func startJumping() -> Bool{
         var retVal = false
-        if currentAction != .jumpUp && currentAction != .jumpDown{
+        if grounded {
+            shotBullet = false
+            grounded = false
             physicsBody?.velocity = CGVector(dx: (physicsBody?.velocity.dx)!, dy: jumpSpeed)
             currentAction = .jumpUp
             retVal = true
@@ -112,6 +117,7 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     
     func shoot(at direction: CGVector){
         if numBullets != 0 {
+            shotBullet = true
             let angle = atan2(direction.dy, direction.dx)
             let spriteAngle: CGFloat?
             
@@ -151,11 +157,15 @@ class Player: SKSpriteNode, EventListenerNode, Animatable {
     }
     
     func update(_ deltaTime: TimeInterval){
+        if grounded {
+            shotBullet = false
+            resetBullets()
+        }
         updatePlayerState()
     }
     
     func updatePlayerState(){
-        if direction != 0 && physicsBody?.velocity.dx != direction * movementSpeed{
+        if !shotBullet && physicsBody?.velocity.dx != direction * movementSpeed{
             physicsBody?.velocity.dx = direction * movementSpeed
         }
         

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011275F71F194E7400EE23EC /* Level1.sks in Resources */ = {isa = PBXBuildFile; fileRef = 011275F61F194E7400EE23EC /* Level1.sks */; };
+		011A1BCB1F18748100A187B4 /* Stage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 011A1BCA1F18748100A187B4 /* Stage.wav */; };
 		016F70C61F0ECC0D00E160BF /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 016F70C51F0ECC0D00E160BF /* Bullet.swift */; };
 		016F70C81F0EE95100E160BF /* Bullet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 016F70C71F0EE95100E160BF /* Bullet.sks */; };
 		01773E0D1F15551900EE2651 /* Venus.wav in Resources */ = {isa = PBXBuildFile; fileRef = 01773E0C1F15551900EE2651 /* Venus.wav */; };
@@ -20,7 +22,7 @@
 		019A75551F140F670057BEC5 /* Shoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 019A754F1F140F670057BEC5 /* Shoot.wav */; };
 		01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01AD9D9A1EFB36E900C444E9 /* TileSet.sks */; };
 		01E6DBB91EF9ABBF00DC6837 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */; };
-		01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */; };
+		01E6DBBB1EF9ABBF00DC6837 /* Level2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBBA1EF9ABBF00DC6837 /* Level2.sks */; };
 		01E6DBBF1EF9ABBF00DC6837 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */; };
 		01E6DBC11EF9ABBF00DC6837 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */; };
 		01E6DBC41EF9ABC000DC6837 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01E6DBC21EF9ABC000DC6837 /* Main.storyboard */; };
@@ -50,6 +52,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		011275F61F194E7400EE23EC /* Level1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Level1.sks; sourceTree = "<group>"; };
+		011A1BCA1F18748100A187B4 /* Stage.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Stage.wav; sourceTree = "<group>"; };
 		016F70C51F0ECC0D00E160BF /* Bullet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
 		016F70C71F0EE95100E160BF /* Bullet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Bullet.sks; sourceTree = "<group>"; };
 		01773E0C1F15551900EE2651 /* Venus.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Venus.wav; sourceTree = "<group>"; };
@@ -64,7 +68,7 @@
 		01AD9D9A1EFB36E900C444E9 /* TileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TileSet.sks; sourceTree = "<group>"; };
 		01E6DBB51EF9ABBF00DC6837 /* Unshackled.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unshackled.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		01E6DBBA1EF9ABBF00DC6837 /* Level2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Level2.sks; sourceTree = "<group>"; };
 		01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		01E6DBC31EF9ABC000DC6837 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -109,6 +113,8 @@
 		019A75481F1403760057BEC5 /* Levels */ = {
 			isa = PBXGroup;
 			children = (
+				011275F61F194E7400EE23EC /* Level1.sks */,
+				01E6DBBA1EF9ABBF00DC6837 /* Level2.sks */,
 			);
 			name = Levels;
 			sourceTree = "<group>";
@@ -122,6 +128,7 @@
 				019A754A1F140F670057BEC5 /* Finish.wav */,
 				019A754B1F140F670057BEC5 /* Jump.wav */,
 				019A754C1F140F670057BEC5 /* Land.wav */,
+				011A1BCA1F18748100A187B4 /* Stage.wav */,
 				019A754D1F140F670057BEC5 /* Lost.wav */,
 				019A754E1F140F670057BEC5 /* Music.wav */,
 				019A754F1F140F670057BEC5 /* Shoot.wav */,
@@ -156,7 +163,6 @@
 				019A75481F1403760057BEC5 /* Levels */,
 				0AAAEFB71F003D1A003F9FA9 /* GameObjects */,
 				01E6DBB81EF9ABBF00DC6837 /* AppDelegate.swift */,
-				01E6DBBA1EF9ABBF00DC6837 /* GameScene.sks */,
 				01E6DBBE1EF9ABBF00DC6837 /* GameScene.swift */,
 				01E6DBC01EF9ABBF00DC6837 /* GameViewController.swift */,
 				01E6DBC21EF9ABC000DC6837 /* Main.storyboard */,
@@ -308,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01773E111F1555B500EE2651 /* Mercury.wav in Resources */,
+				011A1BCB1F18748100A187B4 /* Stage.wav in Resources */,
 				019A75511F140F670057BEC5 /* Jump.wav in Resources */,
 				019A75501F140F670057BEC5 /* Finish.wav in Resources */,
 				01773E0D1F15551900EE2651 /* Venus.wav in Resources */,
@@ -315,11 +322,12 @@
 				019A75551F140F670057BEC5 /* Shoot.wav in Resources */,
 				01AD9D9B1EFB36E900C444E9 /* TileSet.sks in Resources */,
 				016F70C81F0EE95100E160BF /* Bullet.sks in Resources */,
+				011275F71F194E7400EE23EC /* Level1.sks in Resources */,
 				019A75541F140F670057BEC5 /* Music.wav in Resources */,
 				019A75521F140F670057BEC5 /* Land.wav in Resources */,
 				01E6DBC41EF9ABC000DC6837 /* Main.storyboard in Resources */,
 				019A75531F140F670057BEC5 /* Lost.wav in Resources */,
-				01E6DBBB1EF9ABBF00DC6837 /* GameScene.sks in Resources */,
+				01E6DBBB1EF9ABBF00DC6837 /* Level2.sks in Resources */,
 				01E6DBC61EF9ABC000DC6837 /* Assets.xcassets in Resources */,
 				01E6DBC91EF9ABC000DC6837 /* LaunchScreen.storyboard in Resources */,
 			);

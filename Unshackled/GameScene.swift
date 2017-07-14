@@ -21,8 +21,13 @@ struct PhysicsCategory{
     static let All: UInt32              = UInt32.max
 }
 
+enum GameStates: UInt8{
+    case playing = 0, win, lose
+}
+
 class GameScene: SKScene {
     //MARK: Member Lets
+    let maxLevel: UInt = 2
     let topBottomTileReductionFraction:CGFloat = 0.55
     let soundJump = SKAction.playSoundFileNamed("Jump.wav", waitForCompletion: false)
     let soundLand = SKAction.playSoundFileNamed("Land.wav", waitForCompletion: false)
@@ -37,21 +42,35 @@ class GameScene: SKScene {
     var visibleSize: CGSize!
     var player: Player!
     var sourceBullet: Bullet!
+    
+    var UIBulletCount: SKLabelNode!
+    var UIBulletContainer: SKNode!
+    
     var lastTime:TimeInterval = 0
     var startingPosition: CGPoint!
-    var isPlaying: Bool = true
+    var gameState: GameStates = .playing
+    
+    var currentLevel: UInt = 1
+    
+    //MARK: Class Functions
+    class func level(levelNum: UInt) -> GameScene? {
+        let scene = GameScene(fileNamed: "Level\(levelNum)")!
+        scene.currentLevel = levelNum
+        scene.scaleMode = .aspectFill
+        return scene
+    }
     
     //MARK: Override Functions
     
     override func didMove(to view: SKView) {
         setupVisibleSize()
-        setupTextureFilter()
         
         backgroundColor = UIColor(colorLiteralRed: 0.318, green: 0.659, blue: 1.0, alpha: 1.0)
         physicsWorld.gravity.dy *= 0.75
         
         mapNode = childNode(withName: "Platforms") as! SKTileMapNode
         setupPhysics()
+        setupAmmo()
         
         sourceBullet = SKScene(fileNamed: "Bullet")!.childNode(withName: "Bullet") as! Bullet
         sourceBullet.texture?.filteringMode = .nearest
@@ -68,18 +87,22 @@ class GameScene: SKScene {
         player = childNode(withName: "Player") as! Player
         startingPosition = player.position
         goalNode = childNode(withName: "Goal") as! SKSpriteNode
-        setupGoal(goalNode)
+        UIBulletCount = childNode(withName: "//*UIBulletLabel") as! SKLabelNode
+        UIBulletContainer = childNode(withName: "//*UIBulletContainer")
         
+        setupGoal(goalNode)
         addGestureRecognizers(to: view)
         setupCamera()
-        
-        playBackgroundMusic(name: "Mercury.wav")
+        setupUI()
+        setupTextureFilter()
+        playBackgroundMusic(name: "Stage.wav")
     }
     
     override func update(_ currentTime: TimeInterval) {
         let deltaTime = lastTime > 0 ? currentTime - lastTime : 0
         lastTime = currentTime
         player.update(deltaTime)
+        updateAmmo()
     }
     
     //MARK: Gesture Recognizers
@@ -120,7 +143,7 @@ class GameScene: SKScene {
     //MARK: Gesture Handlers
     
     func didSwipe(sender:UISwipeGestureRecognizer){
-        if isPlaying {
+        if gameState == .playing {
             switch sender.direction{
             case UISwipeGestureRecognizerDirection.left:
                 player.startRunning(isRight: false)
@@ -139,16 +162,26 @@ class GameScene: SKScene {
     }
     
     func didTap(sender: UITapGestureRecognizer){
-        if isPlaying{
+        if gameState == .playing{
             let touchLocation = convertPoint(fromView: sender.location(in: sender.view))
             player.shoot(at: CGVector(dx: touchLocation.x - player.position.x, dy: touchLocation.y - player.position.y))
         }
-        else{
+        else if gameState == .lose{
             resetLevel()
+        } else{
+            nextLevel()
         }
     }
     
     //MARK: Setup Functions
+    
+    func setupAmmo(){
+        enumerateChildNodes(withName: "//*Ammo*", using: {node, _ in
+            if let ammoNode:SKSpriteNode = node as? SKSpriteNode {
+                self.attachAmmoPhysics(node: ammoNode)
+            }
+        })
+    }
     
     func setupCamera(){
         guard let camera = camera else {return}
@@ -211,7 +244,23 @@ class GameScene: SKScene {
         }
     }
     
-    //MARK: TileMap Physics
+    func setupUI(){
+        UIBulletContainer.position = CGPoint(x: -visibleSize.width, y: -visibleSize.height)
+    }
+    
+    //MARK: Attaching Physics
+    
+    func attachAmmoPhysics(node: SKSpriteNode){
+        node.physicsBody = SKPhysicsBody(rectangleOf: node.size)
+        node.physicsBody?.categoryBitMask = PhysicsCategory.Ammo
+        node.physicsBody?.fieldBitMask = PhysicsCategory.Platform
+        node.physicsBody?.collisionBitMask = PhysicsCategory.Platform
+        node.physicsBody?.contactTestBitMask = PhysicsCategory.Player
+        node.physicsBody?.restitution = 0
+        node.physicsBody?.friction = 0
+        node.physicsBody?.allowsRotation = false
+    }
+    
     
     func attachTileMapPhysics(map: SKTileMapNode){
         let worldPhysicsNode = SKNode()
@@ -225,6 +274,7 @@ class GameScene: SKScene {
         var start:Int = -1
         var end:Int = -1
         var isTop = false
+        
         for row in 0..<tileMap.numberOfRows {
             
             for col in 0..<tileMap.numberOfColumns {
@@ -289,22 +339,25 @@ class GameScene: SKScene {
     //MARK: Misc Functions
     
     func loseLevel() {
-        if isPlaying {
+        if gameState == .playing{
+            gameState = .lose
             stopGame()
             run(soundLose)
             player.physicsBody?.categoryBitMask = PhysicsCategory.None
             player.physicsBody?.fieldBitMask = PhysicsCategory.None
             player.physicsBody?.collisionBitMask = PhysicsCategory.None
             player.run(player.createDeathAnimation(viewHeight: visibleSize.height))
-            print("Lose")
         }
     }
     
     func nextLevel() {
+        if currentLevel < maxLevel {
+            currentLevel += 1
+        }
+        view?.presentScene(GameScene.level(levelNum: currentLevel))
     }
     
     func stopGame(){
-        isPlaying = false
         player.stop()
         stopBackgroundMusic()
         camera?.constraints = []
@@ -319,11 +372,7 @@ class GameScene: SKScene {
     }
     
     func resetLevel() {
-        setupCamera()
-        player.setupPhysics()
-        player.position = startingPosition
-        isPlaying = true
-        playBackgroundMusic(name: "Mercury.wav")
+        view?.presentScene(GameScene.level(levelNum: currentLevel))
     }
     
     
@@ -334,6 +383,7 @@ class GameScene: SKScene {
         bullet.position = position
         bullet.zRotation = angle
         bullet.setVelocity(angle: angle)
+        updateAmmo()
         addChild(bullet)
         run(soundShoot)
     }
@@ -345,11 +395,15 @@ class GameScene: SKScene {
     }
     
     func winLevel() {
-        if isPlaying {
+        if gameState == .playing {
+            gameState = .win
             stopGame()
             run(soundWin)
-            print("Win")
         }
+    }
+    
+    func updateAmmo(){
+        UIBulletCount.text = "x\(player.numBullets)"
     }
 }
 extension GameScene : SKPhysicsContactDelegate{
@@ -362,18 +416,35 @@ extension GameScene : SKPhysicsContactDelegate{
             let other = contact.bodyA.categoryBitMask == PhysicsCategory.Player ? contact.bodyB : contact.bodyA
             switch other.categoryBitMask {
             case PhysicsCategory.Platform:
-                player.resetBullets()
-                run(soundLand)
+                if contact.contactNormal.dy > 0 {
+                    player.grounded = true
+                    run(soundLand)
+                }
             case PhysicsCategory.Edge:
-                player.resetBullets()
-                if player.frame.minY - mapNode.frame.minY <= 5 {
+                updateAmmo()
+                if contact.contactNormal.dy > 0 {
                     loseLevel()
                 }
             case PhysicsCategory.Goal:
                 winLevel()
             case PhysicsCategory.Ammo:
                 player.increaseAmmo(by: 1)
+                updateAmmo()
+                other.node?.removeFromParent()
                 
+            default:
+                break
+            }
+        }
+    }
+    func didEnd(_ contact: SKPhysicsContact) {
+        if contact.bodyA.categoryBitMask == PhysicsCategory.Player || contact.bodyB.categoryBitMask == PhysicsCategory.Player{
+            let other = contact.bodyA.categoryBitMask == PhysicsCategory.Player ? contact.bodyB : contact.bodyA
+            switch other.categoryBitMask {
+            case PhysicsCategory.Platform:
+                if contact.contactNormal == CGVector.zero{
+                    player.grounded = false
+                }
             default:
                 break
             }
